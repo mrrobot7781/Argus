@@ -1,3 +1,4 @@
+
 """
 Argus - System Information Module
 
@@ -11,7 +12,12 @@ from datetime import datetime
 
 
 def run():
-    """Collect system information."""
+    """
+    Collect and return system information.
+
+    Returns:
+        dict: Structured system information.
+    """
 
     boot_time = datetime.fromtimestamp(psutil.boot_time())
     uptime = datetime.now() - boot_time
@@ -30,4 +36,11 @@ def run():
         "Uptime": str(uptime).split(".")[0]
     }
 
-    return system_info
+    return {
+        "module": "System Information",
+        "status": "PASS",
+        "severity": "INFO",
+        "data": system_info
+    }
+
+
