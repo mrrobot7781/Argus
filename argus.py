@@ -5,14 +5,8 @@ Automated Linux Security Auditing Framework
 
 from modules import system, users, ssh, firewall
 from utils import formatter
+from utils.banner import show_banner
 
-def banner():
-    """Display the Argus banner."""
-
-    print("=" * 70)
-    print("                        ARGUS v1.0")
-    print("         Automated Linux Security Auditing Framework")
-    print("=" * 70)
 
 def print_module(result):
 
@@ -40,7 +34,7 @@ def print_module(result):
 def main():
     """Main entry point for Argus."""
 
-    banner()
+    show_banner()
 
     print("\nStarting Linux Security Audit...\n")
 
