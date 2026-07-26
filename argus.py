@@ -3,32 +3,13 @@ ARGUS v1.0
 Automated Linux Security Auditing Framework
 """
 
-from modules import system, users, ssh, firewall
-from utils import formatter
+from rich.progress import Progress
+import time
+
+from modules import system, users, ssh, firewall, ports
+
 from utils.banner import show_banner
-
-
-def print_module(result):
-
-    formatter.header(result["module"])
-
-    for key, value in result["data"].items():
-        print(f"{key:<35}: {value}")
-
-    print("-" * 70)
-
-    print(
-        f"{'Status':<35}: "
-        f"{formatter.status_color(result['status'])}"
-    )
-
-    print(
-        f"{'Severity':<35}: "
-        f"{formatter.severity_color(result['severity'])}"
-    )
-
-    print("-" * 70)
-
+from utils.display import print_module
 
 
 def main():
@@ -36,28 +17,49 @@ def main():
 
     show_banner()
 
-    print("\nStarting Linux Security Audit...\n")
+    print("\n[+] Starting Linux Security Audit...\n")
 
+    # List of audit modules
     modules = [
         system.run,
         users.run,
         ssh.run,
         firewall.run,
+        ports.run,
     ]
 
-    for module in modules:
-        result = module()
+    results = []
+
+    # Progress Bar
+    with Progress() as progress:
+
+        task = progress.add_task(
+            "[cyan]Running Security Audit...",
+            total=len(modules)
+        )
+
+        for module in modules:
+
+            result = module()
+
+            results.append(result)
+
+            time.sleep(0.5)
+
+            progress.advance(task)
+
+    # Display Results
+    for result in results:
         print_module(result)
 
+    # Final Summary
     print("\n" + "=" * 70)
-    print("ARGUS SECURITY AUDIT COMPLETED")
+    print("               ARGUS SECURITY AUDIT COMPLETED")
     print("=" * 70)
-    print("Modules Executed : {}".format(len(modules)))
+    print(f"Modules Executed : {len(modules)}")
     print("Status           : SUCCESS")
     print("=" * 70)
 
 
 if __name__ == "__main__":
     main()
-
-
